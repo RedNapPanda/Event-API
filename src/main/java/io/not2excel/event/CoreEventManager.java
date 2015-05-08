@@ -82,31 +82,52 @@ public final class CoreEventManager implements EventManager {
     }
 
     @Override
-    public <E extends EventContext> void unsubscribe(EventSubscriber<E> subscriber) {
-
-    }
-
-    @Override
     public void unsubscribe(Object parent) {
-
+        final Map<Class<? extends EventContext>, List<MethodEventSubscriber<? extends EventContext>>> deltaSubscribers = new HashMap<>();
+        Arrays.stream(parent.getClass().getDeclaredMethods()).parallel().forEach(method -> {
+            if (this.checkMethod(method)) {
+                Class<? extends EventContext> eventContext = this.pullContext(method);
+                List<MethodEventSubscriber<? extends EventContext>> subscriberList;
+                if (deltaSubscribers.containsKey(eventContext)) {
+                    subscriberList = deltaSubscribers.get(eventContext);
+                } else {
+                    subscriberList = new LinkedList<>();
+                }
+                subscriberList.add(new MethodEventSubscriber<>(eventContext, parent, method));
+                deltaSubscribers.put(eventContext, subscriberList);
+            }
+        });
+        deltaSubscribers.forEach((eventContext, subscriberList) ->
+                subscriberList.forEach(subscriber -> this.unsubscribeSingle(eventContext, subscriber)));
     }
 
     @Override
     public void unsubscribeSingle(Class<? extends EventContext> eventContext, EventSubscriber<? extends EventContext> subscriber) {
         synchronized (this.registeredSubscribers) {
-
+            if(this.registeredSubscribers.containsKey(eventContext)) {
+                this.registeredSubscribers.get(eventContext).unregisterSubscriber(subscriber);
+            }
         }
     }
 
     @Override
     public <E extends EventContext> void unsubscribe(Class<E> eventContext, Object parent) {
-
+        final List<MethodEventSubscriber<? extends EventContext>> deltaSubscribers = new LinkedList<>();
+        Arrays.stream(parent.getClass().getDeclaredMethods()).parallel().forEach(method -> {
+            if (this.checkMethod(method, eventContext)) {
+                deltaSubscribers.add(new MethodEventSubscriber<>(eventContext, parent, method));
+            }
+        });
+        deltaSubscribers.forEach(subscriber -> this.unsubscribeSingle(eventContext, subscriber));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <E extends EventContext> void fire(E event) {
         synchronized (this.registeredSubscribers) {
-
+            if (this.registeredSubscribers.containsKey(event.getClass())) {
+                ((EventDispatcher<E>) this.registeredSubscribers.get(event.getClass())).fire(event);
+            }
         }
     }
 

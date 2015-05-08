@@ -21,8 +21,6 @@ public interface EventManager {
 
     <E extends EventContext> void unsubscribe(Class<E> eventContext);
 
-    <E extends EventContext> void unsubscribe(EventSubscriber<E> subscriber);
-
     void unsubscribe(Object parent);
 
     void unsubscribeSingle(Class<? extends EventContext> eventContext, EventSubscriber<? extends EventContext> subscriber);

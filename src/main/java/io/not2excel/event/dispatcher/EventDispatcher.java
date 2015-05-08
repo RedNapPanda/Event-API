@@ -24,6 +24,7 @@ public class EventDispatcher<E extends EventContext> {
         subscriberList = new LinkedList<>();
     }
 
+    @SuppressWarnings("unchecked")
     public void registerSubscriber(EventSubscriber<? extends EventContext> subscriber) {
         if (!(subscriber instanceof EventSubscriberPriority)) {
             subscriber = new WrappedEventSubscriber<>(subscriber);
@@ -40,12 +41,12 @@ public class EventDispatcher<E extends EventContext> {
                     }
                 }
             } else {
-                this.subscriberList.add(subscriber);
+                this.subscriberList.add((EventSubscriber<E>) subscriber);
             }
         }
     }
 
-    public void unregisterSubscriber(EventSubscriber<E> subscriber) {
+    public void unregisterSubscriber(EventSubscriber<? extends EventContext> subscriber) {
         synchronized (this.subscriberList) {
             this.subscriberList.remove(subscriber);
         }
