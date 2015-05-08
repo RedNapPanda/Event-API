@@ -13,5 +13,5 @@ import io.not2excel.event.context.EventContext;
 @FunctionalInterface
 public interface EventSubscriber<E extends EventContext> {
 
-    void dispatch(E eventContext);
+    void dispatch(E event);
 }
