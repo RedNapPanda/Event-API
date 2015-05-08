@@ -13,15 +13,12 @@ import io.not2excel.event.context.EventContext;
 import io.not2excel.event.dispatcher.EventDispatcher;
 import io.not2excel.event.subscriber.EventSubscriber;
 import io.not2excel.event.subscriber.MethodEventSubscriber;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Method;
 import java.util.*;
 
 public final class CoreEventManager implements EventManager {
 
-    private final Logger logger = LogManager.getLogger(CoreEventManager.class.getSimpleName());
     private final Map<Class<? extends EventContext>, EventDispatcher<? extends EventContext>> registeredSubscribers;
 
     public CoreEventManager() {

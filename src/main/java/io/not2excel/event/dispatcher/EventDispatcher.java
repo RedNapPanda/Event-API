@@ -13,6 +13,7 @@ import io.not2excel.event.subscriber.EventSubscriber;
 import io.not2excel.event.subscriber.EventSubscriberPriority;
 import io.not2excel.event.subscriber.WrappedEventSubscriber;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -48,7 +49,13 @@ public class EventDispatcher<E extends EventContext> {
 
     public void unregisterSubscriber(EventSubscriber<? extends EventContext> subscriber) {
         synchronized (this.subscriberList) {
-            this.subscriberList.remove(subscriber);
+            Iterator<EventSubscriber<E>> iterator = this.subscriberList.iterator();
+            while(iterator.hasNext()) {
+                EventSubscriber<E> s = iterator.next();
+                if(s.equals(subscriber)) {
+                    iterator.remove();
+                }
+            }
         }
     }
 
