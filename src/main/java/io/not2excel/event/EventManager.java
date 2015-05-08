@@ -13,7 +13,7 @@ import io.not2excel.event.subscriber.EventSubscriber;
 
 public interface EventManager {
 
-    <E extends EventContext> void subscribe(Class<E> eventContext, EventSubscriber<E> subscribers);
+    void subscribeSingle(Class<? extends EventContext> eventContext, EventSubscriber<? extends EventContext> subscriber);
 
     void subscribe(Object parent);
 
@@ -21,11 +21,11 @@ public interface EventManager {
 
     <E extends EventContext> void unsubscribe(Class<E> eventContext);
 
-    void unsubscribe(EventSubscriber<?> subscriber);
+    <E extends EventContext> void unsubscribe(EventSubscriber<E> subscriber);
 
     void unsubscribe(Object parent);
 
-    <E extends EventContext> void unsubscribe(Class<E> eventContext, EventSubscriber<E> subscriber);
+    void unsubscribeSingle(Class<? extends EventContext> eventContext, EventSubscriber<? extends EventContext> subscriber);
 
     <E extends EventContext> void unsubscribe(Class<E> eventContext, Object parent);
 

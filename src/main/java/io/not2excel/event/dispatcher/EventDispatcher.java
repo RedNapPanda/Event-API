@@ -24,7 +24,7 @@ public class EventDispatcher<E extends EventContext> {
         subscriberList = new LinkedList<>();
     }
 
-    public void registerSubscriber(EventSubscriber<E> subscriber) {
+    public void registerSubscriber(EventSubscriber<? extends EventContext> subscriber) {
         if (!(subscriber instanceof EventSubscriberPriority)) {
             subscriber = new WrappedEventSubscriber<>(subscriber);
         }

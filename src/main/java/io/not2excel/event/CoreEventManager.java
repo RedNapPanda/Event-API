@@ -30,19 +30,17 @@ public final class CoreEventManager implements EventManager {
 
     @Override
     @SuppressWarnings("unchecked")
-    public synchronized <E extends EventContext> void subscribe(Class<E> eventContext, EventSubscriber<E> subscriber) {
-        EventDispatcher<E> eventDispatcher;
-        if (!this.registeredSubscribers.containsKey(eventContext)) {
-            eventDispatcher = new EventDispatcher<>();
-        } else {
-            /*
-            This causes an unchecked exception
-            Due to compiler not being able to verify the type of the dispatcher in the map to be of type E
-            */
-            eventDispatcher = (EventDispatcher<E>) this.registeredSubscribers.get(eventContext);
+    public void subscribeSingle(Class<? extends EventContext> eventContext, EventSubscriber<? extends EventContext> subscriber) {
+        synchronized (this.registeredSubscribers) {
+            EventDispatcher<? extends EventContext> eventDispatcher;
+            if (!this.registeredSubscribers.containsKey(eventContext)) {
+                eventDispatcher = new EventDispatcher<>();
+            } else {
+                eventDispatcher = this.registeredSubscribers.get(eventContext);
+            }
+            eventDispatcher.registerSubscriber(subscriber);
+            this.registeredSubscribers.put(eventContext, eventDispatcher);
         }
-        eventDispatcher.registerSubscriber(subscriber);
-        this.registeredSubscribers.put(eventContext, eventDispatcher);
     }
 
     @Override
@@ -62,7 +60,7 @@ public final class CoreEventManager implements EventManager {
             }
         });
         deltaSubscribers.forEach((eventContext, subscriberList) ->
-                subscriberList.forEach(subscriber -> this.subscribe(eventContext, subscriber)));
+                subscriberList.forEach(subscriber -> this.subscribeSingle(eventContext, subscriber)));
     }
 
     @Override
@@ -73,7 +71,7 @@ public final class CoreEventManager implements EventManager {
                 deltaSubscribers.add(new MethodEventSubscriber<>(eventContext, parent, method));
             }
         });
-        deltaSubscribers.forEach(subscriber -> this.subscribe(eventContext, subscriber));
+        deltaSubscribers.forEach(subscriber -> this.subscribeSingle(eventContext, subscriber));
     }
 
     @Override
@@ -84,7 +82,7 @@ public final class CoreEventManager implements EventManager {
     }
 
     @Override
-    public void unsubscribe(EventSubscriber<?> subscriber) {
+    public <E extends EventContext> void unsubscribe(EventSubscriber<E> subscriber) {
 
     }
 
@@ -94,8 +92,10 @@ public final class CoreEventManager implements EventManager {
     }
 
     @Override
-    public <E extends EventContext> void unsubscribe(Class<E> eventContext, EventSubscriber<E> subscriber) {
+    public void unsubscribeSingle(Class<? extends EventContext> eventContext, EventSubscriber<? extends EventContext> subscriber) {
+        synchronized (this.registeredSubscribers) {
 
+        }
     }
 
     @Override
@@ -105,7 +105,9 @@ public final class CoreEventManager implements EventManager {
 
     @Override
     public <E extends EventContext> void fire(E event) {
+        synchronized (this.registeredSubscribers) {
 
+        }
     }
 
     private boolean checkMethod(Method method) {
