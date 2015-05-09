@@ -120,10 +120,10 @@ public final class CoreEventManager implements EventManager {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <E extends EventContext> void fire(E event) {
+    public <E extends EventContext> void dispatch(E event) {
         synchronized (this.registeredSubscribers) {
             if (this.registeredSubscribers.containsKey(event.getClass())) {
-                ((EventDispatcher<E>) this.registeredSubscribers.get(event.getClass())).fire(event);
+                ((EventDispatcher<E>) this.registeredSubscribers.get(event.getClass())).dispatch(event);
             }
         }
     }

@@ -65,7 +65,7 @@ public class EventDispatcher<E extends EventContext> {
         }
     }
 
-    public void fire(E event) {
+    public void dispatch(E event) {
         synchronized (this.subscriberList) {
             this.subscriberList.forEach(subscriber -> subscriber.dispatch(event));
         }

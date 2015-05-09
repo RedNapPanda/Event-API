@@ -27,5 +27,5 @@ public interface EventManager {
 
     <E extends EventContext> void unsubscribe(Class<E> eventContext, Object parent);
 
-    <E extends EventContext> void fire(E event);
+    <E extends EventContext> void dispatch(E event);
 }
