@@ -11,7 +11,7 @@ package io.not2excel.event;
 import io.not2excel.event.context.EventContext;
 import io.not2excel.event.subscriber.EventSubscriber;
 
-public interface EventManager {
+public interface EventCoordinator {
 
     void subscribeSingle(Class<? extends EventContext> eventContext, EventSubscriber<? extends EventContext> subscriber);
 

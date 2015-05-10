@@ -17,11 +17,11 @@ import io.not2excel.event.subscriber.MethodEventSubscriber;
 import java.lang.reflect.Method;
 import java.util.*;
 
-public final class CoreEventManager implements EventManager {
+public final class CoreEventCoordinator implements EventCoordinator {
 
     private final Map<Class<? extends EventContext>, EventDispatcher<? extends EventContext>> registeredSubscribers;
 
-    public CoreEventManager() {
+    public CoreEventCoordinator() {
         registeredSubscribers = new HashMap<>();
     }
 
